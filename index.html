@@ -1,0 +1,2041 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Camera Movement with Mouse in JavaScript</title>
+    <style>
+      :root {
+        --final-top: 100px; /* defalult top for shut */
+        --final-left: 500px; /* defalult left for shut */
+        --first-top: 0px; /* defalult top for shut */
+        --first-left: 00px; /* defalult left for shut */
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: black;
+      }
+      #gameCanvas {
+        height: 3020.8px;
+        position: relative;
+        margin: auto;
+        background: url('./maps/untitled.png') no-repeat 50%;
+        background-size: auto;
+        background-size: 99.7%;
+      }
+      #landPage {
+        background: url(./images/landpage.jpg) no-repeat 50%;
+        background-size: 100%;
+      }
+      #startBut {
+        position: absolute;
+        width: 450px;
+        height: 170px;
+        top: 524px;
+        left: 500px;
+        /* background-color: red; */
+      }
+      #selectChar {
+        background: url(./images/یه\ صفحه\ انتخاب\ کاپیتان\ دزد\ دریایی\ و\ مامور\ گارد\ انگلیسی\ که\ با\ موی\ بلند\ دارن\ کلاه\ گیس\ و\ باید\ انتخاب\ کنیم\ با\ یه\ بک\ گراند\ باحال\ اسم\ هاشون\ هم\ .jpg)
+          no-repeat 50%;
+        background-size: 100%;
+      }
+      #selectChar > #pirate {
+        position: absolute;
+        top: 48px;
+        left: 60px;
+        width: 667px;
+        height: 785px;
+      }
+      #selectChar > #gard {
+        position: absolute;
+        top: 48px;
+        right: 60px;
+        width: 667px;
+        height: 785px;
+      }
+      .open {
+        height: 880px;
+        margin: 20px 200px;
+        position: relative;
+      }
+      #gameSet {
+        background: url(./images/در\ پس\ زمینه\ کاپیتان\ دزد\ دریایی\ با\ کاپیتان\ گارد\ انگلیس\ در\ حال\ مبارزع\ و\ دو\ طرف\ صفحه\ دو\ چند\ گزینه\ ای\ با\ عنوان\ انتخاب\ رنگ\ بازکن\ اول\ و\ بازیکن\ د.jpg)
+          no-repeat 50%;
+        background-size: 100%;
+      }
+      #gameSet > #ply1 {
+        position: absolute;
+        top: 117px;
+        left: 136.7px;
+        background: url('./images/jackCard.jpg') no-repeat 50%;
+        background-size: auto;
+        background-size: 100%;
+        width: 304.2px;
+        height: 400px;
+      }
+      #gameSet > #p1ColorSelect1 {
+        right: 390.6px;
+        bottom: 81.2px;
+        background-color: black;
+      }
+      #gameSet > #p1ColorSelect2 {
+        right: 390.6px;
+        bottom: 113px;
+        background-color: red;
+      }
+      #gameSet > #p1ColorSelect3 {
+        right: 390.6px;
+        bottom: 145px;
+        background-color: yellow;
+      }
+      #gameSet > #p1ColorSelect4 {
+        right: 390.6px;
+        bottom: 176px;
+        background-color: blue;
+      }
+      #gameSet > #p1ColorSelect5 {
+        right: 390.6px;
+        bottom: 208px;
+        background-color: pink;
+      }
+      .colorReq {
+        position: absolute;
+        right: 390.6px;
+        width: 60px;
+        height: 30px;
+      }
+      #gameSet > #ply2 {
+        position: absolute;
+        top: 117px;
+        right: 136.7px;
+        background: url('./images/winCard.jpg') no-repeat 50%;
+        background-size: auto;
+        background-size: 100%;
+        width: 304.2px;
+        height: 400px;
+      }
+      #gameSet > #p2ColorSelect1 {
+        left: 135.6px;
+        bottom: 81.2px;
+        background-color: black;
+      }
+      #gameSet > #p2ColorSelect2 {
+        left: 135.6px;
+        bottom: 113px;
+        background-color: red;
+      }
+      #gameSet > #p2ColorSelect3 {
+        left: 135.6px;
+        bottom: 145px;
+        background-color: yellow;
+      }
+      #gameSet > #p2ColorSelect4 {
+        left: 135.6px;
+        bottom: 176px;
+        background-color: blue;
+      }
+      #gameSet > #p2ColorSelect5 {
+        left: 135.6px;
+        bottom: 208px;
+        background-color: pink;
+      }
+      .cursor {
+        cursor:
+          url('./images/icons8-sword-50.png') 50 50,
+          auto;
+      }
+      .close {
+        display: none;
+      }
+      .tile {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        box-sizing: border-box;
+      }
+      .water {
+        background: url(./water2.jpg) no-repeat center center;
+        background-size: cover;
+      }
+      .land {
+        background: url(./images/sahel.jpg) no-repeat center center;
+        background-size: cover;
+      }
+      #piratFlag {
+        position: absolute;
+        height: 200px;
+        width: 100px;
+        top: -60.7px;
+        left: 397.5px;
+        background: url('./images/pirateddFlag.png') no-repeat 50%;
+        background-size: auto;
+        background-size: 102.8%;
+      }
+      #tower1 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        top: 392.2px;
+        left: 370.8px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 102.8%;
+      }
+      #tower1level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite;
+      }
+      .towerevent {
+        width: 100px;
+        height: 100px;
+        display: flex;
+        position: absolute;
+        top: -10px;
+        mix-blend-mode: lighten;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .fire {
+        background: url('/images/gif/towerFire.gif') no-repeat 50%;
+        background-size: 100%;
+      }
+      .explode {
+        background: url('/images/gif/ex.gif') no-repeat 50%;
+        background-size: 100%;
+      }
+      #tower1area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower2 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        top: 353.2px;
+        right: 528.8px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: 102.8%;
+      }
+      #tower2level1circle1 {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background: url('./images/space_breaker_asset/Others/weapon_hardpoint_medium.png')
+          no-repeat 50%;
+        border-radius: 50%;
+      }
+      #tower2level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 3s;
+      }
+      #tower2area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower3 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        top: 340.2px;
+        left: 524.8px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: 102.8%;
+      }
+      #tower3level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 6s;
+      }
+      #tower3area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower4 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        top: 818.2px;
+        right: 263.6px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 102.8%;
+      }
+      #tower4level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 2s;
+      }
+      #tower4area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower5 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        bottom: 300.8px;
+        right: 306px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: 102.8%;
+      }
+      #tower5level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        filter: hue-rotate(240deg);
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 1s;
+      }
+      #tower5area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower6 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        bottom: 231.5px;
+        right: 395.8px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 102.8%;
+      }
+      #tower6level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        filter: hue-rotate(240deg);
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 3s;
+      }
+      #tower6area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower7 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        bottom: 522.2px;
+        left: 417.4px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 102.8%;
+      }
+      #tower7area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #tower7level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        filter: hue-rotate(240deg);
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 1s;
+      }
+      #tower8 {
+        position: absolute;
+        height: 100px;
+        width: 100px;
+        bottom: 1048.1px;
+        left: 560.1px;
+        background: url('./images/space_breaker_asset/Others/Towers/tower01_pixart_128.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 102.8%;
+      }
+      #tower8level {
+        background: url('/images/space_breaker_asset/Weapons/Medium/Cannon/turret_01_mk1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 67.7%;
+        width: 100px;
+        height: 102.2px;
+        display: flex;
+        filter: hue-rotate(240deg);
+        transition: 0.9s;
+        animation: towerNormalAnimation 20s infinite 5s;
+      }
+      #tower8area {
+        position: absolute;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -456px;
+        left: -444px;
+      }
+      #paratesBuild {
+        position: absolute;
+        height: 273.2px;
+        width: 200px;
+        top: 94.7px;
+        left: 341.1px;
+        background: url('./images/home/pho.png') no-repeat 50%;
+        background-size: 143.5%;
+        mix-blend-mode: darken;
+      }
+      #englishBuild {
+        position: absolute;
+        height: 346.2px;
+        width: 243.3px;
+        bottom: 66.5px;
+        right: 106.6px;
+        background: url('./images/home/5cc0602c-387d-434a-85f4-797518f81cfa.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 90.7%;
+      }
+      #ship {
+        position: absolute;
+        height: 170px;
+        width: 70px;
+        top: 500px;
+        left: 106.6px;
+        background: url('./images/PNG/Boats_color1/Boat_color1_1.png') no-repeat
+          50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 224%;
+        transition: 2s;
+        filter: hue-rotate(500deg);
+      }
+      .ship1 {
+        height: 170px;
+        width: 70px;
+        background: url('./images/PNG/Boats_color1/Boat_color1_1.png') no-repeat
+          50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 224%;
+        transition: 2s;
+        z-index: 10;
+      }
+      .ship2 {
+        height: 170px;
+        width: 70px;
+        background: url('./images/PNG/Boats_color1/Boat_color1_2.png') no-repeat
+          50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 224%;
+        transition: 2s;
+        z-index: 10;
+      }
+      .ship3 {
+        height: 170px;
+        width: 90px;
+        background: url('./images/PNG/Boats_color1/Boat_color1_3.png') no-repeat
+          50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 162%;
+        transition: 2s;
+        z-index: 10;
+      }
+      .ship4 {
+        height: 170px;
+        width: 70px;
+        background: url('./images/PNG/Boats_color1/Boat_color1_4.png') no-repeat
+          50%;
+        background-size: auto;
+        background-size: auto;
+        background-size: 224%;
+        transition: 2s;
+        z-index: 10;
+      }
+      .shipcannon {
+        position: absolute;
+        height: 146.9px;
+        width: 63.8px;
+        rotate: 0deg;
+      }
+      .ship1Cannon {
+        bottom: 32.1px;
+        right: 1px;
+        background: url('./images/PNG/Cannon1_color1/Cannon1_color1_3.png')
+          no-repeat 50%;
+        background-position-x: 50%;
+        background-position-y: center;
+        background-size: auto;
+        background-size: 200.9%;
+        background-position: 50% 33px;
+        transition: 1s;
+      }
+      .ship2Cannon {
+        bottom: 32.1px;
+        right: 4px;
+        background: url('./images/PNG/Cannon2_color1/Cannon2_color1_1.png')
+          no-repeat 50%;
+        background-position-x: 50%;
+        background-position-y: center;
+        background-size: auto;
+        background-size: 200.9%;
+        background-position: 50% 33px;
+        transition: 1s;
+      }
+      .ship3Cannon {
+        right: 13.8px;
+        bottom: 32.1px;
+        background: url('./images/PNG/Cannon3_color1/Cannon3_color1_3.png')
+          no-repeat 50%;
+        background-position-x: 50%;
+        background-position-y: center;
+        background-size: auto;
+        background-size: 200.9%;
+        background-position: 50% 33px;
+        transition: 1s;
+      }
+      .ship4Cannon {
+        bottom: 32.1px;
+        right: 4px;
+        background: url('./images/PNG/Cannon4_color1/Cannon4_color1_1.png')
+          no-repeat 50%;
+        background-position-x: 50%;
+        background-position-y: center;
+        background-size: auto;
+        background-size: 200.9%;
+        background-position: 50% 33px;
+        transition: 1s;
+      }
+      #boatlevel1head {
+        position: absolute;
+        height: 146.9px;
+        width: 63.8px;
+        bottom: 32.1px;
+        right: 2px;
+        background: url('./images/PNG/Cannon1_color1/Cannon1_color1_3.png')
+          no-repeat 50%;
+        background-position-x: 50%;
+        background-position-y: center;
+        background-size: auto;
+        background-size: 200.9%;
+        background-position: 50% 33px;
+        rotate: 0deg;
+      }
+      .areaShipLevel1 {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        border: 2px dashed #ccc;
+        display: none;
+        top: -217.8px;
+        left: -251px;
+      }
+      #playerResours {
+        align-items: center;
+        background-color: #2c3e50;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        /* width: 130px;
+        height: 125px; */
+        gap: 8px;
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        display: flex;
+        flex-flow: wrap column;
+      }
+      .resourseItem {
+        color: #ecf0f1;
+        font-family: Arial, sans-serif;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #3498db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff;
+      }
+      #playerGold {
+        background: url('images/items/18.png') no-repeat 50%;
+        background-size: 80%;
+      }
+      #playerMana {
+        background: url('images/items/14.png') no-repeat 50%;
+        background-size: 80%;
+      }
+      #playerChar {
+        background: url('images/items/44.png') no-repeat 50%;
+        background-size: 80%;
+      }
+      #playerShips {
+        background: url('images/items/46.png') no-repeat 50%;
+        background-size: 80%;
+      }
+      .infoNumber {
+        font-size: 13px;
+        font-weight: bold;
+        width: 30px;
+        color: #ccc;
+      }
+      .itemBlock {
+        width: 100%;
+        height: fit-content;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+      #palayerInfo {
+        height: 200px;
+        margin: auto;
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        z-index: 1000;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin: 0 16px;
+      }
+      #menubarPic {
+        width: 160px;
+        height: 200px;
+        background-color: black;
+        background: url('/images/jackCard.jpg') no-repeat 50%;
+        background-size: 100%;
+        /* margin-left: 60px; */
+      }
+      #menubar {
+        background-color: #2c3e50;
+        height: 87%;
+        width: 100%;
+        border-radius: 20px;
+        display: flex;
+        gap: 16px;
+        flex-flow: row nowrap;
+        padding: 0 16px;
+      }
+      .manubarBuyShipItem {
+        width: 120px;
+
+        margin: 8px 0;
+        position: relative;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .manubarBuyShipItem:hover {
+        background-color: #ccc !important;
+        transform: scale(1.09);
+      }
+      #shiplevel1ButItem {
+        background: url('/images/PNG/Boats_color1/Boat_color1_1.png') no-repeat
+          50%;
+      }
+      #shiplevel2ButItem {
+        background: url('/images/PNG/Boats_color1/Boat_color1_2.png') no-repeat
+          50%;
+      }
+      #shiplevel3ButItem {
+        background: url('/images/PNG/Boats_color1/Boat_color1_3.png') no-repeat
+          50%;
+      }
+      #shiplevel4ButItem {
+        background: url('/images/PNG/Boats_color1/Boat_color1_4.png') no-repeat
+          50%;
+      }
+      .shipButItemCannon {
+        position: absolute;
+        top: 33%;
+        left: 33%;
+        width: 89.6px;
+        height: 127px;
+        left: 15.7px;
+        top: 29.7px;
+      }
+      #Cannonlevel1Item {
+        background: url('/images/PNG/Cannon1_color1/Cannon1_color1_1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 120.1%;
+      }
+      #Cannonlevel1Item {
+        background: url('/images/PNG/Cannon1_color1/Cannon1_color1_1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 120.1%;
+      }
+      #Cannonlevel2Item {
+        background: url('/images/PNG/Cannon2_color1/Cannon2_color1_1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 120.1%;
+      }
+      #Cannonlevel3Item {
+        background: url('/images/PNG/Cannon3_color1/Cannon3_color1_1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 120.1%;
+      }
+      #Cannonlevel4Item {
+        background: url('/images/PNG/Cannon4_color1/Cannon4_color1_1.png')
+          no-repeat 50%;
+        background-size: auto;
+        background-size: 120.1%;
+      }
+      #endTurn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background-color: red;
+        width: 100px;
+        height: 50px;
+        text-align: center;
+        line-height: 48px;
+      }
+      /* animations */
+      @keyframes towerShutAnimation {
+        0% {
+          background-position-y: 50%;
+        }
+        50% {
+          background-position-y: 56%;
+        }
+        100% {
+          background-position-y: 50%;
+        }
+      }
+      @keyframes towerNormalAnimation {
+        0% {
+          rotate: 0deg;
+        }
+        10% {
+          rotate: 45deg;
+        }
+        20% {
+          rotate: 90deg;
+        }
+        30% {
+          rotate: 135deg;
+        }
+        40% {
+          rotate: 180deg;
+        }
+        50% {
+          rotate: 90deg;
+        }
+        60% {
+          rotate: 45deg;
+        }
+        70% {
+          rotate: -45deg;
+        }
+        80% {
+          rotate: -90deg;
+        }
+        90% {
+          rotate: -180deg;
+        }
+        100% {
+          rotate: 0deg;
+        }
+      }
+      @keyframes ShutLevel1Animation {
+        0% {
+          top: var(--first-top);
+          left: var(--first-left);
+        }
+        100% {
+          top: var(--final-top);
+          left: var(--final-left);
+        }
+      }
+      @keyframes boat1WaterAnimation {
+        0% {
+          background: url('./images/PNG/Boat1_water_animation_color1/Boat1_water_frame1.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        25% {
+          background: url('./images/PNG/Boat1_water_animation_color1/Boat1_water_frame2.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        50% {
+          background: url('./images/PNG/Boat1_water_animation_color1/Boat1_water_frame3.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        75% {
+          background: url('./images/PNG/Boat1_water_animation_color1/Boat1_water_frame4.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        100% {
+          background: url('./images/PNG/Boat1_water_animation_color1/Boat1_water_frame1.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+      }
+      @keyframes boat2WaterAnimation {
+        0% {
+          background: url('./images/PNG/Boat2_water_animation_color/Boat2_water_frame1.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        25% {
+          background: url('./images/PNG/Boat2_water_animation_color/Boat2_water_frame2.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        50% {
+          background: url('./images/PNG/Boat2_water_animation_color/Boat2_water_frame3.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        75% {
+          background: url('./images/PNG/Boat2_water_animation_color/Boat2_water_frame4.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        100% {
+          background: url('./images/PNG/Boat2_water_animation_color/Boat2_water_frame1.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+      }
+      @keyframes boat3WaterAnimation {
+        0% {
+          background: url('./images/PNG/Boat3_water_animation_color1/Boat3_water_frame1.png')
+            no-repeat 50%;
+          background-size: 160%;
+        }
+        25% {
+          background: url('./images/PNG/Boat3_water_animation_color1/Boat3_water_frame2.png')
+            no-repeat 50%;
+          background-size: 160%;
+        }
+        50% {
+          background: url('./images/PNG/Boat3_water_animation_color1/Boat3_water_frame3.png')
+            no-repeat 50%;
+          background-size: 160%;
+        }
+        75% {
+          background: url('./images/PNG/Boat3_water_animation_color1/Boat3_water_frame4.png')
+            no-repeat 50%;
+          background-size: 160%;
+        }
+        100% {
+          background: url('./images/PNG/Boat3_water_animation_color1/Boat3_water_frame1.png')
+            no-repeat 50%;
+          background-size: 160%;
+        }
+      }
+      @keyframes boat4WaterAnimation {
+        0% {
+          background: url('./images/PNG/Boat4_water_animation_color1/Boat4_water_frame1.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        25% {
+          background: url('./images/PNG/Boat4_water_animation_color1/Boat4_water_frame2.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        50% {
+          background: url('./images/PNG/Boat4_water_animation_color1/Boat4_water_frame3.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        75% {
+          background: url('./images/PNG/Boat4_water_animation_color1/Boat4_water_frame4.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+        100% {
+          background: url('./images/PNG/Boat4_water_animation_color1/Boat4_water_frame1.png')
+            no-repeat 50%;
+          background-size: 224%;
+        }
+      }
+      @keyframes level1FireAnimation {
+        0% {
+          background: url('./images/PNG/Cannon1_color1/Cannon1_color1_1.png')
+            no-repeat 50%;
+          background-position-x: 50%;
+          background-position-y: center;
+          background-size: auto;
+          background-size: 158.9%;
+          background-position: 50% 40px;
+        }
+        33% {
+          background: url('./images/PNG/Cannon1_color1/Cannon1_color1_2.png')
+            no-repeat 50%;
+          background-position-x: 50%;
+          background-position-y: center;
+          background-size: auto;
+          background-size: 158.9%;
+          background-position: 50% 40px;
+        }
+        66% {
+          background: url('./images/PNG/Cannon1_color1/Cannon1_color1_3.png')
+            no-repeat 50%;
+          background-position-x: 50%;
+          background-position-y: center;
+          background-size: auto;
+          background-size: 158.9%;
+          background-position: 50% 40px;
+        }
+
+        100% {
+          background: url('./images/PNG/Cannon1_color1/Cannon1_color1_1.png')
+            no-repeat 50%;
+          background-position-x: 50%;
+          background-position-y: center;
+          background-size: auto;
+          background-size: 158.9%;
+          background-position: 50% 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <audio
+      src="./audio/Pirates of the Caribbean.mp3"
+      preload=""
+      id="sing"
+    ></audio>
+    <audio
+      src="./audio/tank-turret-rotate-14879.mp3"
+      preload=""
+      id="towerTurnAudio"
+    ></audio>
+    <audio src="./audio/smallExplode.mp3" preload="" id="towerShut"></audio>
+    <audio
+      src="./audio/medium-explosion-40472.mp3"
+      preload=""
+      id="middleExplode"
+    ></audio>
+    <audio src="./audio/Mouse-Click .mp3" preload="" id="click"></audio>
+
+    <div id="gameCanvas" class="close">
+      <div id="endTurn">Next></div>
+      <div id="palayerInfo">
+        <div id="menubarPic"></div>
+        <div id="menubar">
+          <div class="manubarBuyShipItem" id="shiplevel1ButItem">
+            <div id="Cannonlevel1Item" class="shipButItemCannon"></div>
+          </div>
+          <div class="manubarBuyShipItem" id="shiplevel2ButItem">
+            <div id="Cannonlevel2Item" class="shipButItemCannon"></div>
+          </div>
+          <div class="manubarBuyShipItem" id="shiplevel3ButItem">
+            <div id="Cannonlevel3Item" class="shipButItemCannon"></div>
+          </div>
+          <div class="manubarBuyShipItem" id="shiplevel4ButItem">
+            <div id="Cannonlevel4Item" class="shipButItemCannon"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="playerResours">
+        <div class="itemBlock">
+          <div id="playerGold" class="resourseItem"></div>
+          <span id="gold" class="infoNumber"></span>
+        </div>
+        <div class="itemBlock">
+          <div id="playerMana" class="resourseItem"></div>
+          <span id="prof" class="infoNumber"></span>
+        </div>
+
+        <div class="itemBlock">
+          <div id="playerChar" class="resourseItem"></div>
+          <span id="char" class="infoNumber"></span>
+        </div>
+
+        <div class="itemBlock">
+          <div id="playerShips" class="resourseItem"></div>
+          <span id="shipsNum" class="infoNumber"></span>
+        </div>
+      </div>
+      <span id="piratFlag"></span>
+      <div id="paratesBuild"></div>
+      <div id="tower1">
+        <span id="tower1Event" class="towerevent"></span>
+        <span id="tower1level"><span id="tower1area"></span></span>
+      </div>
+      <div id="tower2">
+        <span id="tower2level"><span id="tower2area"></span></span>
+        <span id="tower2Event" class="towerevent"></span>
+      </div>
+      <span id="tower2level1circle1"></span>
+      <div id="tower3">
+        <span id="tower3level"><span id="tower3area"></span></span>
+        <span id="tower3Event" class="towerevent"></span>
+      </div>
+      <div id="tower4">
+        <span id="tower4level"><span id="tower4area"></span></span>
+        <span id="tower4Event" class="towerevent"></span>
+      </div>
+      <div id="englishBuild"></div>
+      <div id="tower5">
+        <span id="tower5level"><span id="tower5area"></span></span>
+        <span id="tower5Event" class="towerevent"></span>
+      </div>
+      <div id="tower6">
+        <span id="tower6level"><span id="tower6area"></span></span>
+        <span id="tower6Event" class="towerevent"></span>
+      </div>
+      <div id="tower7">
+        <span id="tower7level"><span id="tower7area"></span></span>
+        <span id="tower7Event" class="towerevent"></span>
+      </div>
+      <div id="tower8">
+        <span id="tower8level"><span id="tower8area"></span></span>
+        <span id="tower8Event" class="towerevent"></span>
+      </div>
+    </div>
+    <div id="landPage" class="open">
+      <div id="startBut" class="cursor"></div>
+    </div>
+    <div id="selectChar" class="close">
+      <div id="pirate" class="charCardSelect cursor">کپیتان ریش سیاه</div>
+      <div id="gard" class="charCardSelect cursor">کاپیتان وین استار</div>
+    </div>
+
+    <script>
+      //infinity play music
+      sing.play();
+
+      setInterval(function () {
+        sing.currentTime = 10;
+      }, 85000);
+      const game = document.getElementById('gameCanvas');
+      // const tileSize = 60;
+
+      // let camera = {
+      //   x: 0,
+      //   y: 0,
+      //   width: game.clientWidth,
+      //   height: game.clientHeight,
+      // };
+
+      // // موقعیت موس
+      // let mouse = {
+      //   x: 0,
+      //   y: 0,
+      // };
+
+      // // تابع برای به‌روزرسانی موقعیت دوربین
+      // function updateCamera(deltaTime) {
+      //   const sensitivity = 0.02;
+      //   const edgeThreshold = 0.1;
+      //   const edgeX = game.clientWidth * edgeThreshold;
+      //   const edgeY = game.clientHeight * edgeThreshold;
+
+      //   if (
+      //     mouse.x > game.clientWidth - edgeX ||
+      //     mouse.x < edgeX ||
+      //     mouse.y > game.clientHeight - edgeY ||
+      //     mouse.y < edgeY
+      //   ) {
+      //     const mouseX = mouse.x - game.clientWidth / 2;
+      //     const mouseY = mouse.y - game.clientHeight / 2;
+
+      //     camera.x += mouseX * sensitivity * deltaTime;
+      //     camera.y += mouseY * sensitivity * deltaTime;
+      //   }
+
+      //   // محدودیت‌های دوربین (تا از مرزهای نقشه خارج نشود)
+      //   const maxX = map[0].length * tileSize - camera.width;
+      //   const maxY = map.length * tileSize - camera.height;
+
+      //   camera.x = Math.max(0, Math.min(camera.x, maxX));
+      //   camera.y = Math.max(0, Math.min(camera.y, maxY));
+      // }
+
+      // // حرکت موس
+      // game.addEventListener("mousemove", (e) => {
+      //   mouse.x = e.clientX - game.offsetLeft;
+      //   mouse.y = e.clientY - game.offsetTop;
+      // });
+
+      // // حلقه بازی
+      // function gameLoop() {
+      //   updateCamera(1); // deltaTime تقریبی (معادل 60 فریم بر ثانیه)
+      //   requestAnimationFrame(gameLoop);
+      // }
+
+      // // شروع بازی
+      // gameLoop();
+
+      //utility
+      //get id and return html element
+      function getElementId(elementId) {
+        return document.getElementById(elementId);
+      }
+      //get tower level where we need it
+      function getTowerLevel() {
+        return getElementId(towerSelectedData.towerLevelId);
+      }
+      function getTowerArea() {
+        return getElementId(towerSelectedData.areaId);
+      }
+      function calcDegFromPoints(x1, y1, x2, y2) {
+        const rad = calceRadianPoint(x2 - x1, y2 - y1);
+        let towerDeg = CalcDegFromRadian(rad);
+        return towerDeg;
+      }
+      //click sound
+      function customClick() {
+        click.play();
+        landPage.className = 'close';
+      }
+
+      //game lan page
+      startBut.onclick = function () {
+        customClick();
+        selectChar.className = 'open';
+        click.currentTime = 0;
+      };
+      pirate.onclick = function () {
+        selectChar.className = 'close';
+        gameCanvas.className = 'open';
+      };
+
+      gard.onclick = function () {
+        customClick();
+        selectChar.className = 'close';
+        gameCanvas.className = 'open';
+      };
+      //shuts balls
+      function shutlevel1Set() {
+        tower2level1circle1.style.top = towerSelectedData.ypoint + 'px';
+        tower2level1circle1.style.left = towerSelectedData.xpoint + 'px';
+      }
+      //sounds
+      function midExplode() {
+        middleExplode.play();
+        middleExplode.currentTime = 0;
+      }
+      function towerShutSound() {
+        const towerlevel = getTowerLevel();
+        setTimeout(function () {
+          towerShut.play();
+          towerShut.currentTime = 0;
+          towerlevel.style.animation = 'towerShutAnimation 0.3s forwards';
+        }, 900);
+      }
+      //towers
+      var towers = [
+        {
+          id: 1,
+          level: 1,
+          build: false,
+          own: false,
+          xpoint: 411,
+          ypoint: 437,
+          areaId: 'tower1area',
+          towerLevelId: 'tower1level',
+          health: 100,
+          towerEventGifId: 'tower1Event',
+        },
+        {
+          id: 2,
+          level: 1,
+          build: true,
+          own: false,
+          xpoint: 1330,
+          ypoint: 395,
+          areaId: 'tower2area',
+          towerLevelId: 'tower2level',
+          health: 100,
+          towerEventGifId: 'tower2Event',
+        },
+        {
+          id: 3,
+          level: 1,
+          build: false,
+          own: false,
+          xpoint: 574,
+          ypoint: 387,
+          areaId: 'tower3area',
+          towerLevelId: 'tower3level',
+          health: 100,
+          towerEventGifId: 'tower3Event',
+        },
+        {
+          id: 4,
+          level: 1,
+          build: false,
+          own: false,
+          xpoint: 1606,
+          ypoint: 867,
+          areaId: 'tower4area',
+          towerLevelId: 'tower4level',
+          health: 100,
+          firegifId: '',
+          explodegifId: '',
+          towerEventGifId: 'tower4Event',
+        },
+        {
+          id: 5,
+          level: 1,
+          build: false,
+          own: true,
+          xpoint: 1564,
+          ypoint: 2668,
+          areaId: 'tower5area',
+          towerLevelId: 'tower5level',
+          health: 100,
+          towerEventGifId: 'tower5Event',
+        },
+        {
+          id: 6,
+          level: 1,
+          build: false,
+          own: true,
+          xpoint: 1474,
+          ypoint: 2738,
+          areaId: 'tower6area',
+          towerLevelId: 'tower6level',
+          health: 100,
+          towerEventGifId: 'tower6Event',
+        },
+        {
+          id: 7,
+          level: 1,
+          build: false,
+          own: true,
+          xpoint: 467,
+          ypoint: 2448,
+          areaId: 'tower7area',
+          towerLevelId: 'tower7level',
+          health: 100,
+          towerEventGifId: 'tower7Event',
+        },
+        {
+          id: 8,
+          level: 1,
+          build: false,
+          own: true,
+          xpoint: 610,
+          ypoint: 1922,
+          areaId: 'tower8area',
+          towerLevelId: 'tower8level',
+          health: 100,
+          towerEventGifId: 'tower8Event',
+        },
+      ];
+      //select tower
+      var selectedTower = 0;
+      var towerSelectedData = {};
+      var value = true;
+      function towerSelect(num) {
+        if (selectedTower === 0) {
+          towerSelectedData = towers[num - 1];
+          const areaId = getTowerArea();
+          areaId.style.display = 'block';
+          selectedTower = num;
+          const towerlevel = getTowerLevel();
+          towerlevel.style.animation = 'none';
+        }
+        if (num === 0) {
+          const areaId = getTowerArea();
+          areaId.style.display = 'none';
+          const towerlevel = getTowerLevel();
+          towerlevel.style.animation = 'none';
+          towerSelectedData = {};
+          selectedTower = 0;
+        }
+      }
+      //slecet tower and show area of aim
+      tower2.onclick = function () {
+        towerSelect(2);
+      };
+      tower1.onclick = function () {
+        towerSelect(1);
+      };
+      tower3.onclick = function () {
+        towerSelect(3);
+      };
+      tower4.onclick = function () {
+        towerSelect(4);
+      };
+      tower5.onclick = function () {
+        towerSelect(5);
+      };
+      tower6.onclick = function () {
+        towerSelect(6);
+      };
+      tower7.onclick = function () {
+        towerSelect(7);
+      };
+      tower8.onclick = function () {
+        towerSelect(8);
+      };
+      //tower damage check
+      function towerFiredCheck() {
+        towers.forEach((tower) => {
+          if (tower.health < 50) {
+            const eventId = getElementId(tower.towerEventGifId);
+            eventId.className = 'towerevent fire';
+          }
+        });
+      }
+      function towerDestroyCheck() {
+        towers.forEach((tower) => {
+          if (tower.health <= 0) {
+            const levelId = getElementId(tower.towerLevelId);
+            levelId.style.display = 'none';
+          }
+        });
+      }
+      var atacked = false;
+      function shutCheaker(e) {
+        //check that the 1 tower is selceted
+        if (
+          selectedTower !== 0 &&
+          e.target.id !== towerSelectedData.towerLevelId
+        ) {
+          //preparing a tower to shut
+          preformShutActionOfTower(
+            e.pageX,
+            e.pageY,
+            towerSelectedData.xpoint,
+            towerSelectedData.ypoint,
+          );
+          //calc distance and make sure the goal is in area
+          const dis = calculateDistance(
+            e.pageX,
+            e.pageY,
+            towerSelectedData.xpoint,
+            towerSelectedData.ypoint,
+          );
+          let acceptShip = false;
+          ships.forEach((item) => {
+            if (
+              Math.abs(item.xpoint - e.pageX) < 100 && // بررسی فاصله افقی
+              Math.abs(item.ypoint - e.pageY) < 100 // بررسی فاصله عمودی
+            ) {
+              acceptShip = true;
+              item.health -= 40;
+              item.shipAreaDelete();
+              if (item.health <= 0) {
+                let shipId = getElementId(item.shipElementId);
+                let cannonId = getElementId(item.cannonElementId);
+                setTimeout(function () {
+                  shipId.style.background =
+                    'url(/images/gif/ex.gif) no-repeat 50%';
+                  shipId.style.mixBlendMode = 'lighten';
+                  shipId.style.backgroundSize = '100%';
+                }, 1700);
+                setTimeout(function () {
+                  shipId.style.mixBlendMode = 'normal';
+                  shipId.style.background =
+                    'url(/images/PNG/Broken_asset/Broken_asset2.png) no-repeat 50%';
+                  cannonId.style.background =
+                    'url(/images/PNG/Broken_asset/Broken_asset5.png) no-repeat 50%';
+                }, 1800);
+                setTimeout(function () {
+                  shipId.style.mixBlendMode = 'normal';
+                  shipId.style.background = 'none';
+                  shipId.style.transition = '3s';
+                  cannonId.style.background = 'none';
+                }, 2200);
+                setTimeout(function () {
+                  shipId.style.display = 'none';
+                  cannonId.style.display = 'none';
+                }, 2400);
+              }
+            }
+          });
+          if (dis < 500 && acceptShip) {
+            //the shut is accepted and start
+
+            towerShutAction(
+              e.pageX,
+              e.pageY,
+              towerSelectedData.xpoint,
+              towerSelectedData.ypoint,
+            );
+            towerFiredCheck();
+            selectedTower = 0;
+            acceptShip = false;
+          } else {
+            towerSelect(0); //for delete select
+          }
+        }
+      }
+      function preformShutActionOfTower(x1, y1, x2, y2) {
+        shutlevel1Set();
+        towerTurn(x1, y1, x2, y2);
+      }
+      function towerShutAction(x1, y1, x2, y2) {
+        const areaId = getTowerArea();
+        towerShutAnimation(x1, y1, x2, y2);
+        tower1cir(x1, y1, x2, y2);
+        areaId.style.display = 'none';
+      }
+      //tower attack shot
+      gameCanvas.onclick = function (e) {
+        shutCheaker(e);
+      };
+      function towerShutAnimation() {
+        const towerlevel = getTowerLevel();
+        towerShutSound();
+        setTimeout(function () {
+          midExplode();
+          towerlevel.style.animation = 'towerNormalAnimation 20s infinite 3s';
+        }, 1300);
+      }
+      function towerTurn(x1, y1, x2, y2) {
+        towerTurnAudio.play();
+        const towerlevel = getTowerLevel();
+        let towerDeg = calcDegFromPoints(x1, y1, x2, y2);
+        towerlevel.style.rotate = `${-towerDeg}deg`;
+      }
+      function calceRadianPoint(dx, dy) {
+        const radian = Math.atan2(dx, dy);
+        return radian;
+      }
+      function calculateDistance(x1, y1, x2, y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        return distance;
+      }
+
+      function CalcDegFromRadian(radian) {
+        if (radian < 0) {
+          radian += 2 * Math.PI;
+        }
+        var sinPoint = radian * (180 / Math.PI);
+        return sinPoint;
+      }
+      // full animation of cicle of shut of tower
+      function towerShutCircle(x1, y1, x2, y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        calculateDistance(x1, y1, x2, y2);
+        const deg = calceRadianPoint(dx, dy);
+        x1 += Math.cos(deg);
+        y1 += Math.sin(deg);
+        tower2level1circle1.style.opacity = '1';
+        document.documentElement.style.setProperty('--first-top', `${y2}px`);
+        document.documentElement.style.setProperty('--first-left', `${x2}px`);
+        document.documentElement.style.setProperty('--final-top', `${y1}px`);
+        document.documentElement.style.setProperty('--final-left', `${x1}px`);
+        tower2level1circle1.style.animation =
+          'ShutLevel1Animation 0.9s forwards';
+      }
+      //tower shut throw animation and go fo goal
+      function tower1cir(x1, y1, x2, y2) {
+        setTimeout(() => {
+          towerShutCircle(x1, y1, x2, y2);
+        }, 900);
+        //tower circle shut clear and go for start again in new location
+        setTimeout(() => {
+          shutlevel1Set();
+          tower2level1circle1.style.opacity = '0';
+          tower2level1circle1.style.animation = '';
+        }, 1900);
+      }
+      function towerDestroyCheck() {
+        towers.forEach((tower) => {
+          if (tower.health <= 0) {
+            const levelId = getElementId(tower.towerLevelId);
+            const eventId = getElementId(tower.towerEventGifId);
+            setTimeout(function () {
+              levelId.style.display = 'none';
+              eventId.style.display = 'none';
+            }, 3000);
+          }
+        });
+      }
+      var towerAtack = false;
+      var atackTowerData = [];
+      function shipAtackToTower(id, damage) {
+        towerAtack = true;
+        let filterTower = towers.filter((item) => item.id == id);
+        atackTowerData.push(filterTower[0]);
+        filterTower[0].health -= damage;
+        let explodeGif = getElementId(filterTower[0].towerEventGifId);
+        setTimeout(() => {
+          explodeGif.className = 'towerevent explode';
+        }, 1000);
+        setTimeout(() => {
+          explodeGif.className = '';
+          towerFiredCheck();
+        }, 2000);
+        towerDestroyCheck();
+      }
+      var atackedShipId = 0;
+      //boats
+      var WhosTurn = false;
+      class Ships {
+        constructor(
+          id,
+          xpoint,
+          ypoint,
+          canMove,
+          isMoving,
+          own,
+          shipElementId,
+          areaElementId,
+          cannonElementId,
+        ) {
+          this.id = id;
+          this.xpoint = xpoint;
+          this.ypoint = ypoint;
+          this.canMove = canMove;
+          this.isMoving = isMoving;
+          this.own = own;
+          this.shipElementId = shipElementId;
+          this.areaElementId = areaElementId;
+          this.cannonElementId = cannonElementId;
+        }
+        // Ship area display
+        shipAreaSet(e) {
+          if (selectedShip != 0) {
+            atackedShipId = this.id;
+            if (atackedShipId == selectedShip) {
+              //this is moving
+            } else {
+              //this is atacking use atack func
+              this.#atack();
+            }
+            towers.forEach((item) => {
+              if (
+                Math.abs(item.xpoint - e.pageX) < 100 && // بررسی فاصله افقی
+                Math.abs(item.ypoint - e.pageY) < 100 // بررسی فاصله عمودی
+              ) {
+                shipAtackToTower(item.id, 30);
+                this.#atack();
+              }
+            });
+          } else {
+            let areaId = document.getElementById(this.areaElementId);
+            let shipId = document.getElementById(this.shipElementId);
+            if (areaId) {
+              areaId.style.display = 'block';
+              shipId.style.zIndex = '1';
+            }
+            selectedShip = this.id;
+          }
+        }
+        shipSelectedMoveChecker(e) {
+          let ban = this.#checkIslandClickBanned(e.pageX, e.pageY);
+          if (ban === false && e.target.id === this.areaElementId) {
+            this.moveShip(e.pageX, e.pageY);
+          }
+        }
+
+        // Move ship to new coordinates
+        moveShip(newX, newY) {
+          if (!this.isMoving && this.canMove) {
+            this.isMoving = true;
+            this.#shipTurn(newX, newY, this.xpoint, this.ypoint);
+            setTimeout(() => {
+              this.#shipMoveAnimationAndLocation(newX, newY);
+            }, 1000);
+            setTimeout(() => {
+              this.#setShipAnimationToDefault();
+            }, 3000);
+            setTimeout(() => {
+              this.isMoving = false;
+            }, 4000);
+            this.#setNewLocOfShip(newX, newY);
+          }
+        }
+        shipAreaDelete() {
+          let filterSelectShip = ships.filter(
+            (ship) => ship.id == selectedShip,
+          );
+
+          let areaId = document.getElementById(
+            filterSelectShip[0].areaElementId,
+          );
+
+          areaId.style.display = 'none';
+          selectedShip = 0;
+          atackedShipId = 0;
+        }
+        // Private methods
+        #shipTurn(x1, y1, x2, y2) {
+          let towerDeg = this.#calcDegFromPoints(x1, y1, x2, y2);
+
+          const shipId = document.getElementById(this.shipElementId);
+          if (shipId) {
+            shipId.style.rotate = `${100 + towerDeg}deg`;
+          }
+        }
+
+        #calcDegFromPoints(x1, y1, x2, y2) {
+          return Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+        }
+
+        #setNewLocOfShip(newX, newY) {
+          this.xpoint = newX;
+          this.ypoint = newY;
+        }
+
+        #shipMoveAnimationAndLocation(x, y) {
+          const shipId = document.getElementById(this.shipElementId);
+          if (shipId) {
+            shipId.style.transition = 'all 3s';
+            shipId.style.left = x - 50 + 'px';
+            shipId.style.top = y - 90 + 'px';
+            shipId.style.animation = `boat${this.level}WaterAnimation 1s infinite`;
+          }
+        }
+
+        #setShipAnimationToDefault() {
+          const shipId = document.getElementById(this.shipElementId);
+          if (shipId) {
+            shipId.style.transition = 'all 1s';
+            shipId.style.animation = 'none';
+          }
+        }
+
+        #checkIslandClickBanned(xClick, yClick) {
+          let ban = false;
+          islandsPoints.forEach((island) => {
+            if (
+              xClick >= island.x1 &&
+              xClick <= island.x2 &&
+              yClick >= island.y1 &&
+              yClick <= island.y2
+            ) {
+              ban = true;
+            }
+          });
+          return ban;
+        }
+
+        //atacking
+        #atack() {
+          let filterSelectShip = ships.filter(
+            (ship) => ship.id == selectedShip,
+          );
+          let filterAtackShip = ships.filter(
+            (ship) => ship.id == atackedShipId,
+          );
+          let dis = calculateDistance(
+            filterSelectShip[0].xpoint,
+            filterSelectShip[0].ypoint,
+            filterAtackShip[0].xpoint,
+            filterAtackShip[0].ypoint,
+          );
+          //understand can atack or not i mean in range or not
+          if (dis <= 280 && towerAtack) {
+            this.#cannonTurn(filterSelectShip, atackTowerData);
+            // setTimeout(function () {
+            //   atackTowerData.pop();
+            // }, 1000);
+            console.log('tower Atack');
+          }
+          if (dis <= 280 && filterSelectShip[0].own != filterAtackShip[0].own) {
+            filterAtackShip[0].health -= filterSelectShip[0].damage;
+            //set new updates
+
+            const shipIndex = ships.findIndex(
+              (ship) => ship.id === filterAtackShip[0].id,
+            );
+            ships[shipIndex] = filterAtackShip[0];
+            this.#cannonTurn(filterSelectShip, filterAtackShip);
+            this.shipAreaDelete();
+          }
+        }
+        #cannonTurn(filterSelectShip, filterAtackShip) {
+          setTimeout(function () {
+            towerShutCircle(
+              filterAtackShip[0].xpoint,
+              filterAtackShip[0].ypoint,
+              filterSelectShip[0].xpoint,
+              filterSelectShip[0].ypoint,
+            );
+          }, 1000);
+          setTimeout(() => {
+            shutlevel1Set();
+            tower2level1circle1.style.opacity = '0';
+            tower2level1circle1.style.animation = '';
+          }, 4000);
+          let cannonId = getElementId(filterSelectShip[0].cannonElementId);
+          let towerDeg = calcDegFromPoints(
+            filterSelectShip[0].xpoint,
+            filterSelectShip[0].ypoint,
+            atackTowerData[0].xpoint,
+            atackTowerData[0].ypoint,
+          );
+
+          cannonId.style.rotate = `${towerDeg - 180}deg`;
+          setTimeout(function () {
+            cannonId.style.rotate = '0deg';
+          }, 3000);
+        }
+      }
+
+      // Example usage
+      var islandsPoints = [
+        { x1: 0, x2: 700, y1: 0, y2: 550 },
+        { x1: 1064, x2: 1750, y1: 0, y2: 510 },
+        { x1: 1450, x2: 1950, y1: 640, y2: 1010 },
+        { x1: 90, x2: 760, y1: 1040, y2: 1430 },
+        { x1: 630, x2: 1260, y1: 1300, y2: 1700 },
+        { x1: 230, x2: 760, y1: 1750, y2: 2180 },
+        { x1: 1250, x2: 1950, y1: 1670, y2: 2280 },
+      ];
+      class FastShip extends Ships {
+        constructor(
+          id,
+          xpoint,
+          ypoint,
+          canMove,
+          isMoving,
+          own,
+          shipElementId,
+          areaElementId,
+          cannonElementId,
+        ) {
+          super(
+            id,
+            xpoint,
+            ypoint,
+            canMove,
+            isMoving,
+            own,
+            shipElementId,
+            areaElementId,
+            cannonElementId,
+          );
+          this.damage = 20; // دمیج پایین
+          this.health = 80; // سلامتی پایین
+          this.moveSpeed = 150; // سرعت حرکت بالا
+          this.price = 30; // قیمت پایین
+          this.level = 1;
+        }
+      }
+
+      class StrongShip extends Ships {
+        constructor(
+          id,
+          xpoint,
+          ypoint,
+          canMove,
+          isMoving,
+          own,
+          shipElementId,
+          areaElementId,
+          cannonElementId,
+        ) {
+          super(
+            id,
+            xpoint,
+            ypoint,
+            canMove,
+            isMoving,
+            own,
+            shipElementId,
+            areaElementId,
+            cannonElementId,
+          );
+          this.damage = 50; // دمیج بالا
+          this.health = 150; // سلامتی بالا
+          this.moveSpeed = 80; // سرعت حرکت پایین
+          this.price = 60; // قیمت بالا
+          this.level = 2;
+        }
+      }
+      class BalancedShip extends Ships {
+        constructor(
+          id,
+          xpoint,
+          ypoint,
+          canMove,
+          isMoving,
+          own,
+          shipElementId,
+          areaElementId,
+          cannonElementId,
+        ) {
+          super(
+            id,
+            xpoint,
+            ypoint,
+            canMove,
+            isMoving,
+            own,
+            shipElementId,
+            areaElementId,
+            cannonElementId,
+          );
+          this.damage = 35; // دمیج متوسط
+          this.health = 120; // سلامتی متوسط
+          this.moveSpeed = 100; // سرعت حرکت متوسط
+          this.price = 45; // قیمت متوسط
+          this.level = 3;
+        }
+      }
+
+      class CheapShip extends Ships {
+        constructor(
+          id,
+          xpoint,
+          ypoint,
+          canMove,
+          isMoving,
+          own,
+          shipElementId,
+          areaElementId,
+          cannonElementId,
+        ) {
+          super(
+            id,
+            xpoint,
+            ypoint,
+            canMove,
+            isMoving,
+            own,
+            shipElementId,
+            areaElementId,
+            cannonElementId,
+          );
+          this.damage = 15; // دمیج خیلی پایین
+          this.health = 60; // سلامتی خیلی پایین
+          this.moveSpeed = 120; // سرعت حرکت نسبتاً بالا
+          this.price = 20; // قیمت خیلی پایین
+          this.level = 4;
+        }
+      }
+
+      var ships = [];
+      var selectedShip = 0; //
+
+      function shipCreate(num) {
+        if (WhosTurn) {
+          resourse[0].ships++;
+          shipsNum.innerHTML = resourse[0].ships;
+        } else {
+          resourse[1].ships++;
+          shipsNum.innerHTML = resourse[1].ships;
+        }
+        const shipTypes = {
+          1: FastShip,
+          2: StrongShip,
+          3: BalancedShip,
+          4: CheapShip,
+        };
+
+        const ShipClass = shipTypes[num];
+
+        let x = 440 + locPointNumber;
+        const y = 600;
+        const isActive = true;
+        const isDestroyed = false;
+        const shipName = `ship${ships.length + 1}`;
+        const areaName = `areaShip${ships.length + 1}`;
+        const cannonName = `cannon${ships.length + 1}`;
+        if (locPointNumber < 800) {
+          locPointNumber += 100;
+        } else {
+          locPointNumber = 100;
+        }
+
+        const newShip = new ShipClass(
+          ships.length + 1, //id
+          x,
+          y,
+          isActive,
+          isDestroyed,
+          WhosTurn,
+          shipName,
+          areaName,
+          cannonName,
+        );
+
+        const newDiv = document.createElement('div');
+        const newDivArea = document.createElement('span');
+
+        ships.push(newShip);
+        shipCreatElement(newShip, newDivArea, newDiv, num);
+        newOnclickAreaSet(newDivArea);
+        newShipDivOnclickSet(newDiv);
+      }
+      function shipCreatElement(newOne, newDivArea, newDiv, num) {
+        newDiv.id = `ship${ships.length}`;
+        newDiv.className = `ship${num}`;
+        newDiv.style.position = 'absolute';
+        newDiv.style.left = `${newOne.xpoint}px`;
+        WhosTurn
+          ? (newDiv.style.bottom = `${newOne.ypoint}px`)
+          : (newDiv.style.top = `${newOne.ypoint}px`);
+        let newDivChildDivForCannon = document.createElement('div');
+        newDivChildDivForCannon.id = `cannon${ships.length}`;
+        newDivChildDivForCannon.className = `shipcannon ship${num}Cannon`;
+        if (WhosTurn == true) {
+          newDiv.style.filter = 'hue-rotate(500deg)';
+        }
+        newDivArea.id = `areaShip${ships.length}`;
+        newDivArea.className = 'areaShipLevel1';
+        newDivChildDivForCannon.append(newDivArea); //for create ship element
+        newDiv.append(newDivChildDivForCannon); //for set onclick for area of ship
+        gameCanvas.append(newDiv); //for set onclick of ship
+      }
+      function newOnclickAreaSet(newDivArea) {
+        newDivArea.onclick = function (e) {
+          let res = ships.filter((item) => item.areaElementId == newDivArea.id);
+          res[0].shipSelectedMoveChecker(e);
+        };
+      }
+      function newShipDivOnclickSet(newDiv) {
+        newDiv.onclick = function (e) {
+          let res = ships.filter((item) => item.shipElementId == newDiv.id);
+          res[0].shipAreaSet(e);
+        };
+      }
+      var locPointNumber = 0; //for plce of ship that craete
+      Cannonlevel1Item.onclick = function () {
+        shipCreate(1);
+      };
+      Cannonlevel2Item.onclick = function () {
+        shipCreate(2);
+      };
+      Cannonlevel3Item.onclick = function () {
+        shipCreate(3);
+      };
+      Cannonlevel4Item.onclick = function () {
+        shipCreate(4);
+      };
+      //resouces
+      var resourse = [
+        { player: 1, gold: 200, ships: 0, char: 0, prof: 0 },
+        { player: 2, gold: 100, ships: 0, char: 0, prof: 0 },
+      ];
+      function resourseSet() {
+        if (WhosTurn) {
+          shipsNum.innerHTML = resourse[0].ships;
+          gold.innerHTML = resourse[0].gold;
+          char.innerHTML = resourse[0].char;
+          prof.innerHTML = resourse[0].prof;
+        } else {
+          shipsNum.innerHTML = resourse[1].ships;
+          gold.innerHTML = resourse[1].gold;
+          char.innerHTML = resourse[1].char;
+          prof.innerHTML = resourse[1].prof;
+        }
+      }
+      resourseSet();
+      //change turn
+      endTurn.onclick = function () {
+        for (let i = 0; i < ships.length; i++) {
+          let areaId = getElementId(ships[i].areaElementId);
+          areaId.style.display = 'none';
+        }
+        menubarPic.style.background = 'url(/images/winCard.jpg) no-repeat 50%';
+        menubarPic.style.backgroundSize = '100%';
+        shiplevel1ButItem.style.filter = 'hue-rotate(500deg)';
+        shiplevel3ButItem.style.filter = 'hue-rotate(500deg)';
+        shiplevel2ButItem.style.filter = 'hue-rotate(500deg)';
+        shiplevel4ButItem.style.filter = 'hue-rotate(500deg)';
+        WhosTurn = !WhosTurn;
+        resourseSet();
+      };
+    </script>
+  </body>
+</html>
